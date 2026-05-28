@@ -48,7 +48,7 @@ st.markdown("""
 # ── Load Data ─────────────────────────────────────────────────────────────────
 @st.cache_data
 def load_data():
-    df = pd.read_csv("data.csv")
+    df = pd.read_csv("hunger_games_reviews_clean.csv")
     return df
 
 df = load_data()
