@@ -52,7 +52,7 @@ st.markdown("""
 
 # ── Load & Process Data ───────────────────────────────────────────────────────
 @st.cache_data
-def load_and_process(path="data.csv"):
+def load_and_process(path="hunger_games_reviews_clean.csv"):
     df = pd.read_csv(path)
     df_clean = df.dropna(subset=["review"]).reset_index(drop=True)
     df_clean["review"] = df_clean["review"].astype(str)
