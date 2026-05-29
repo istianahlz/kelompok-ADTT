@@ -19,7 +19,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import (classification_report, confusion_matrix,
                              accuracy_score, precision_score, recall_score, f1_score)
 
-# ── Page Config ───────────────────────────────────────────────────────────────
+# config
 st.set_page_config(
     page_title="Dashboard Analisis Hunger Games",
     page_icon="🎬",
@@ -27,7 +27,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Purple Theme Colors ───────────────────────────────────────────────────────
+# colors
 COLOR_POS    = "#a78bfa"   # purple-400
 COLOR_NEG    = "#f472b6"   # pink-400
 COLOR_NEU    = "#c4b5fd"   # purple-300
@@ -123,7 +123,7 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-# ── Load & Process Data ───────────────────────────────────────────────────────
+# data
 @st.cache_data
 def load_and_process(path="hunger_games_reviews_clean.csv"):
     df = pd.read_csv(path)
@@ -204,8 +204,7 @@ def run_nb(_df):
     cm     = confusion_matrix(yte, y_pred)
     report = classification_report(yte, y_pred, target_names=le.classes_, output_dict=True)
     return acc_base, best_acc, best_alpha, best_thresh, best_cv, cm, report, le, alpha_results
-
-# ── Matplotlib purple theme helper ───────────────────────────────────────────
+  
 def purple_fig(figsize=(6, 4)):
     fig, ax = plt.subplots(figsize=figsize, facecolor="none")
     ax.set_facecolor("#1a1033")
@@ -216,7 +215,7 @@ def purple_fig(figsize=(6, 4)):
         spine.set_edgecolor("#3b1f6e")
     return fig, ax
 
-# ── Run pipeline ─────────────────────────────────────────────────────────────
+
 with st.spinner("✨ Memproses data dengan VADER, LDA, dan Naive Bayes..."):
     df_clean = load_and_process("hunger_games_reviews_clean.csv")
     lda_model, feat_names, dominant_topic, topic_conf, topic_names = run_lda(df_clean)
@@ -225,7 +224,6 @@ with st.spinner("✨ Memproses data dengan VADER, LDA, dan Naive Bayes..."):
     df_clean["topic_name"]       = df_clean["dominant_topic"].map(topic_names)
     acc_base, acc_final, best_alpha, best_thresh, best_cv, cm, report, le, alpha_results = run_nb(df_clean)
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown(
         f'<div style="text-align:center;padding:16px 0 8px;">'
@@ -253,14 +251,14 @@ with st.sidebar:
         f'<b>Akurasi Final:</b> <span style="color:#a78bfa;font-weight:700">{acc_final*100:.2f}%</span>'
         f'</div>', unsafe_allow_html=True)
 
-# ── Filter ────────────────────────────────────────────────────────────────────
+
 dff = df_clean[
     df_clean["sentiment_label"].isin(sel_sent) &
     df_clean["topic_name"].isin(sel_topics) &
     df_clean["word_count"].between(wrange[0], wrange[1])
 ].copy()
 
-# ── Header ────────────────────────────────────────────────────────────────────
+
 st.markdown(
     f'<div style="background:linear-gradient(135deg,{BG_CARD} 0%,#2d1b69 100%);'
     f'border:1px solid {BORDER};border-radius:16px;padding:24px 28px;margin-bottom:20px;">'
@@ -269,7 +267,6 @@ st.markdown(
     f'Review Film The Hunger Games &nbsp;·&nbsp; VADER &nbsp;·&nbsp; LDA &nbsp;·&nbsp; Naive Bayes</p>'
     f'</div>', unsafe_allow_html=True)
 
-# ── KPI Cards ─────────────────────────────────────────────────────────────────
 total = len(dff)
 if total == 0:
     st.warning("Tidak ada data yang sesuai filter. Ubah filter di sidebar.")
@@ -298,11 +295,10 @@ for col, val, label, color in kpi_data:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 tab1, tab2, tab3, tab4 = st.tabs(
     ["📊 Distribusi Sentimen", "☁️ Word Cloud & Frekuensi", "🗂️ Topic Modelling", "🤖 Model Naive Bayes"])
 
-# ═══ TAB 1 ═══════════════════════════════════════════════════════════════════
 with tab1:
     c1, c2 = st.columns(2)
     counts = dff["sentiment_label"].value_counts()
@@ -373,7 +369,6 @@ with tab1:
     fig.patch.set_alpha(0)
     st.pyplot(fig, use_container_width=True)
 
-# ═══ TAB 2 ═══════════════════════════════════════════════════════════════════
 with tab2:
     st.markdown('<div class="section-title">25 Kata Paling Sering Muncul</div>', unsafe_allow_html=True)
     all_words = " ".join(dff["review"].dropna().tolist()).split()
@@ -427,7 +422,7 @@ with tab2:
                 fig.patch.set_alpha(0)
                 st.pyplot(fig, use_container_width=True)
 
-# ═══ TAB 3 ═══════════════════════════════════════════════════════════════════
+
 with tab3:
     st.markdown(
         f'<div style="background:{BG_CARD2};border:1px solid {BORDER};border-radius:10px;'
@@ -496,7 +491,6 @@ with tab3:
     fig.patch.set_alpha(0)
     st.pyplot(fig, use_container_width=True)
 
-# ═══ TAB 4 ═══════════════════════════════════════════════════════════════════
 with tab4:
     st.markdown(
         f'<div style="background:{BG_CARD2};border:1px solid {BORDER};border-radius:10px;'
@@ -563,7 +557,6 @@ with tab4:
     fig.patch.set_alpha(0)
     st.pyplot(fig, use_container_width=True)
 
-# ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown(
     f'<hr style="border-color:{BORDER};margin-top:32px">'
     f'<p style="text-align:center;color:#4c1d95;font-size:0.78rem;padding-bottom:8px;">'
